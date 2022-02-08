@@ -66,6 +66,11 @@ fun HomeContent(
             )
 
         }
+        /*ReminderList(
+            viewModel(),
+            modifier = Modifier.fillMaxSize(),
+            navController = navController
+        )*/
     }
 }
 
