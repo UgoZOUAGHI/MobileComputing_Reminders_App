@@ -3,6 +3,7 @@ package com.example.mobilecomputing.Login
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,7 +32,7 @@ import com.example.mobilecomputing.R
 fun Register(
     sharedPreferences: SharedPreferences,
     navController: NavController,
-    onBackPress: () -> Unit
+    onBackPress: () -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -63,6 +65,8 @@ fun Register(
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val editor = sharedPreferences.edit()
+    val context = LocalContext.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -94,9 +98,10 @@ fun Register(
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                navController.navigate("login");
-                sharedPreferences.edit().putString(username,password);
-                sharedPreferences.edit().commit()
+                editor.putString(username,password).apply().apply {
+                    navController.navigate("login")
+                    Toast.makeText(context, "Registered !", Toast.LENGTH_SHORT).show()
+                } //fait le reste tant ce quil y a entre {}
                       },
             enabled = true,
             modifier = Modifier

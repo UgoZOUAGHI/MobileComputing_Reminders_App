@@ -25,6 +25,7 @@ import com.google.accompanist.insets.systemBarsPadding
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 
 import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.test.core.app.ApplicationProvider
 
 
@@ -36,7 +37,6 @@ import androidx.test.core.app.ApplicationProvider
     Surface(modifier = Modifier.fillMaxSize()) {
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
-        var passwordfrompref by remember { mutableStateOf("")}
 
         Column(
             modifier = Modifier
@@ -74,20 +74,18 @@ import androidx.test.core.app.ApplicationProvider
             )
             Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                onClick = { //if(sharedPreferences.contains(username)){
-                    //sharedPreferences.getString(username, passwordfrompref)
-                    //println(passwordfrompref)
-                    //if(passwordfrompref == password){
-                    navController.navigate("home") },//}},
+                onClick = {
+                    check(sharedPreferences = sharedPreferences, navController = navController, username = username, password = password)
+                          },
                 enabled = true,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .size(42.dp),
+                    .size(52.dp),
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
                     text = "Login",
-                    fontSize = 17.sp,
+                    fontSize = 27.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.LightGray,
                 )
@@ -99,13 +97,15 @@ import androidx.test.core.app.ApplicationProvider
                     modifier = Modifier
                         .width(106.dp)
                         .size(42.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.onBackground),
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(
                         text = "Register",
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray,
+                        color = Color.LightGray
                     )
                 }
 
@@ -113,9 +113,19 @@ import androidx.test.core.app.ApplicationProvider
                 Icon(imageVector = Icons.Filled.Info, contentDescription = null)
             }
             }
-        println (password)
-
-
         }
     }
 
+fun check(
+    sharedPreferences: SharedPreferences,
+    navController: NavController,
+    username: String,
+    password: String,
+){
+    if(sharedPreferences.contains(username)){
+        val passwordfrompref = sharedPreferences.getString(username, "")
+        if(passwordfrompref == password){
+            navController.navigate("home")
+        }
+    }
+}

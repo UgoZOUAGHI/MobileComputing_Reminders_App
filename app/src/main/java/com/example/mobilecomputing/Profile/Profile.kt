@@ -1,5 +1,6 @@
 package com.example.mobilecomputing.Profile
 
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -12,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,13 +24,11 @@ import com.google.accompanist.insets.systemBarsPadding
 
 @Composable
 fun Profile(
+    sharedPreferences: SharedPreferences,
     onBackPress: () -> Unit,
     navController: NavController
 ) {
     Surface {
-        val ProfileName = rememberSaveable { mutableStateOf("") }
-        val ReminderDesc = rememberSaveable { mutableStateOf("") }
-        val ReminderDate = rememberSaveable { mutableStateOf("") }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -67,12 +67,6 @@ fun Profile(
                         contentDescription = null,
                         modifier = Modifier.size(150.dp)
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Default.Edit,
-                            contentDescription = null,
-                            modifier = Modifier.size(15.dp)
-                        )
-                    }
                 }
                 Spacer(modifier = Modifier.height(50.dp))
                 Row(
@@ -87,7 +81,7 @@ fun Profile(
                     fontSize = 20.sp
                     )
 
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { navController.navigate("editprofile") }) {
                     Icon(imageVector = Icons.Default.Edit,
                         contentDescription = null,
                         modifier = Modifier.size(15.dp)
@@ -105,7 +99,7 @@ fun Profile(
                         fontSize = 20.sp
                     )
 
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { navController.navigate("editprofile") }) {
                     Icon(imageVector = Icons.Default.Edit,
                         contentDescription = null,
                         modifier = Modifier.size(15.dp)
@@ -119,7 +113,8 @@ fun Profile(
                         .size(44.dp)
                 ) {
                     Text(text = "Log out",
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.LightGray
                     )
                 }
             }

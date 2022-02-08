@@ -12,6 +12,7 @@ import com.example.mobilecomputing.Login.Login
 import com.example.mobilecomputing.Login.Register
 import com.example.mobilecomputing.Reminders.Reminders
 import com.example.mobilecomputing.Profile.Profile
+import com.example.mobilecomputing.Profile.EditProfile
 import com.example.mobilecomputing.Tutorial.Tutorial
 import com.example.mobilecomputing.Tutorial.Tutorial2
 import com.example.mobilecomputing.Tutorial.Tutorial3
@@ -27,11 +28,12 @@ fun MobileComputingApp(
     ) {
         composable(route = "login") {
             Login(sharedPreferences,
-                navController = appState.navController,
+                navController = appState.navController
             )
         }
         composable(route = "register") {
-            Register(sharedPreferences,
+            Register(
+                sharedPreferences,
                 onBackPress = appState::navigateBack,
                 navController = appState.navController
             )
@@ -43,9 +45,18 @@ fun MobileComputingApp(
             Reminders(onBackPress = appState::navigateBack)
         }
         composable(route ="profile"){
-            Profile(onBackPress = appState::navigateBack,
-                    navController = appState.navController)
+            Profile(
+                sharedPreferences,
+                onBackPress= appState::navigateBack,
+                navController = appState.navController)
             }
+        composable(route = "editprofile") {
+            EditProfile(
+                sharedPreferences,
+                onBackPress = appState::navigateBack,
+                navController = appState.navController,
+            )
+        }
         composable(route ="tutorial"){
             Tutorial(onBackPress = appState::navigateBack,
                 navController = appState.navController)
@@ -58,5 +69,5 @@ fun MobileComputingApp(
             Tutorial3(onBackPress = appState::navigateBack,
                 navController = appState.navController)
         }
-        }
     }
+}

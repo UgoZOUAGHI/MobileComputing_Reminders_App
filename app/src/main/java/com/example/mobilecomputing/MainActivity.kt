@@ -16,12 +16,16 @@ import com.example.mobilecomputing.ui.theme.MobileComputingTheme
 class MainActivity : ComponentActivity()
 {
     private lateinit var sharedPreferences: SharedPreferences
-    //var pref: SharedPreferences = ApplicationProvider.getApplicationContext<Context>()
-     //   .getSharedPreferences("MyPref", 0) // 0 - for private mode
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sharedPreferences = getSharedPreferences(
+            getString(R.string.app_name),
+            Context.MODE_PRIVATE
+        )
+        sharedPreferences.edit().putString("adminkey", "admin").apply()
+
         setContent {
             MobileComputingTheme {
                 // A surface container using the 'background' color from the theme
@@ -31,14 +35,6 @@ class MainActivity : ComponentActivity()
 
             }
         }
-
-        sharedPreferences = getSharedPreferences(
-            getString(R.string.app_name),
-            Context.MODE_PRIVATE
-        )
-        var editor: SharedPreferences.Editor = sharedPreferences.edit()
-        sharedPreferences.edit().putString("admin", "admin")
-        sharedPreferences.edit().commit()
     }
 }
 
