@@ -1,6 +1,6 @@
 package com.example.mobilecomputing.Data.Repository
 
-import com.example.mobilecomputing.Data.Dao.ReminderDao
+import com.example.mobilecomputing.Data.Room.ReminderDao
 import com.example.mobilecomputing.Data.Entity.Reminder
 import kotlinx.coroutines.flow.Flow
 

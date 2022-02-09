@@ -1,4 +1,4 @@
-package com.example.mobilecomputing
+package com.example.mobilecomputing.ui
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -7,11 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.test.core.app.ApplicationProvider
-import com.example.mobilecomputing.ui.theme.MobileComputingTheme
+import com.example.mobilecomputing.MobileComputingApp
+import com.example.mobilecomputing.R
+import com.example.mobilecomputing.ui.Theme.MobileComputingTheme
 
 class MainActivity : ComponentActivity()
 {

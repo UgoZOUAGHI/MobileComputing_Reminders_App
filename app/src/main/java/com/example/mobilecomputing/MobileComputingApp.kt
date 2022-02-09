@@ -1,21 +1,21 @@
 package com.example.mobilecomputing
 
 import android.content.SharedPreferences
-import android.provider.ContactsContract
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.mobilecomputing.MobileComputingAppState
-import com.example.mobilecomputing.rememberMobileComputingAppState
-import com.example.mobilecomputing.Home.Home
-import com.example.mobilecomputing.Login.Login
-import com.example.mobilecomputing.Login.Register
-import com.example.mobilecomputing.Reminders.Reminders
-import com.example.mobilecomputing.Profile.Profile
-import com.example.mobilecomputing.Profile.EditProfile
-import com.example.mobilecomputing.Tutorial.Tutorial
-import com.example.mobilecomputing.Tutorial.Tutorial2
-import com.example.mobilecomputing.Tutorial.Tutorial3
+import com.example.mobilecomputing.ui.Home.Home
+import com.example.mobilecomputing.ui.Login.Login
+import com.example.mobilecomputing.ui.Login.Register
+import com.example.mobilecomputing.ui.MobileComputingAppState
+import com.example.mobilecomputing.ui.Reminders.Reminders
+import com.example.mobilecomputing.ui.Reminders.ReminderViewModel
+import com.example.mobilecomputing.ui.Profile.Profile
+import com.example.mobilecomputing.ui.Profile.EditProfile
+import com.example.mobilecomputing.ui.Tutorial.Tutorial
+import com.example.mobilecomputing.ui.Tutorial.Tutorial2
+import com.example.mobilecomputing.ui.Tutorial.Tutorial3
+import com.example.mobilecomputing.ui.rememberMobileComputingAppState
 
 @Composable
 fun MobileComputingApp(
@@ -42,7 +42,9 @@ fun MobileComputingApp(
             Home(navController = appState.navController)
         }
         composable(route = "reminders") {
-            Reminders(onBackPress = appState::navigateBack)
+            Reminders(onBackPress = appState::navigateBack,
+                viewModel = ReminderViewModel()
+                )
         }
         composable(route ="profile"){
             Profile(

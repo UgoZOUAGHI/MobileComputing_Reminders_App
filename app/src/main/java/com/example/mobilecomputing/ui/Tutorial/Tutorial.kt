@@ -1,26 +1,26 @@
-package com.example.mobilecomputing.Tutorial
+package com.example.mobilecomputing.ui.Tutorial
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mobilecomputing.R
 
+
 @Composable
-fun Tutorial2(
+fun Tutorial(
     onBackPress: () -> Unit,
     navController: NavController
 ) {
@@ -38,7 +38,7 @@ fun Tutorial2(
                 )
             }
             FloatingActionButton(
-                onClick = { navController.navigate(route = "tutorial3") },
+                onClick = { navController.navigate(route = "tutorial2") },
                 contentColor = Color.LightGray,
                 modifier = Modifier
                     .padding(start = 80.dp),
@@ -53,14 +53,29 @@ fun Tutorial2(
     ){
 
     }
+    Column(modifier = Modifier.fillMaxSize()
+        .padding(start = 16.dp, top = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    )
+    {
+        Text(text = "Welcome to the Tutorial !",
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp,
+            color = Color.LightGray,
+        )
+    }
+
     Row(
     ) {
 
-        Image(painter = painterResource(id = R.drawable.page2),
+        Image(painter = painterResource(id = R.drawable.page1),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 20.dp, bottom = 110.dp)
+                .padding(top = 39.dp, bottom = 110.dp)
         )
     }
+
 }

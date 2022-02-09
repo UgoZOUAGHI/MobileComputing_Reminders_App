@@ -2,7 +2,6 @@ package com.example.mobilecomputing.Data.Room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.mobilecomputing.Data.Dao.ReminderDao
 import com.example.mobilecomputing.Data.Entity.Reminder
 
 

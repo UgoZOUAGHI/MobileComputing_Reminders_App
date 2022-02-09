@@ -1,4 +1,4 @@
-package com.example.mobilecomputing.Data.Dao
+package com.example.mobilecomputing.Data.Room
 
 import androidx.room.*
 import com.example.mobilecomputing.Data.Entity.Reminder
@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class ReminderDao{
 
-    @Query("""SELECT * FROM Reminders WHERE id = :reminderId""")
+    @Query("""SELECT * FROM reminders WHERE id = :reminderId""")
     abstract suspend fun reminder(reminderId: Long): Reminder?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
