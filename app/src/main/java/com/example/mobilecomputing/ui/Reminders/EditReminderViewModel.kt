@@ -1,4 +1,4 @@
-package com.example.mobilecomputing.ui.Home
+package com.example.mobilecomputing.ui.Reminders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,27 +9,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class EditReminderViewModel(
+    private val reminderId: Long,
     private val reminderRepository: ReminderRepository = Graph.reminderRepository,
-) : ViewModel() {
-    private val _state = MutableStateFlow(HomeViewState())
+): ViewModel() {
+    private val _state = MutableStateFlow(EditReminderViewState(null))
 
-    val state: StateFlow<HomeViewState>
+    val state: StateFlow<EditReminderViewState>
         get() = _state
 
-    suspend fun deleteReminder(id :Long){
-        reminderRepository.removeReminderById(id)
+    suspend fun saveReminder(reminder: Reminder) {
+        return reminderRepository.updateReminder(reminder)
     }
 
     init {
         viewModelScope.launch {
-            reminderRepository.reminders().collect { reminders ->
-                    _state.value = HomeViewState(reminders)
+            reminderRepository.getReminder(reminderId).apply {
+                _state.value = EditReminderViewState(this)
             }
         }
     }
 }
 
-data class HomeViewState(
-    var reminders: List<Reminder> = emptyList()
+data class EditReminderViewState(
+    val reminder: Reminder?
 )

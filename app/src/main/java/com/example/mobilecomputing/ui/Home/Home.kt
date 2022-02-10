@@ -15,6 +15,7 @@ import com.example.mobilecomputing.R
 import com.google.accompanist.insets.systemBarsPadding
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun Home(
@@ -58,13 +59,12 @@ fun HomeContent(
                 backgroundColor = appBarColor,
                 navController = navController
             )
-
+            CategoryReminder(
+                viewModel(),
+                modifier = Modifier.fillMaxSize(),
+                navController = navController
+            )
         }
-        /*ReminderList(
-            viewModel(),
-            modifier = Modifier.fillMaxSize(),
-            navController = navController
-        )*/
     }
 }
 
@@ -78,21 +78,27 @@ private fun HomeAppBar(
             Text(
                 text = "All Reminders",
                 fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
+                fontSize = 25.sp,
                 color = LightGray,
                 modifier = Modifier
-                    .padding(start = 10.dp)
-                    .heightIn(max = 25.dp) ,
+                    .padding(start = 5.dp)
+                    .heightIn(max = 30.dp) ,
 
             )
         },
         backgroundColor = backgroundColor,
         actions = {
             IconButton( onClick = {navController.navigate(route = "profile")} ) {
-                Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = stringResource(R.string.account))
+                Icon(imageVector = Icons.Filled.AccountCircle,
+                    contentDescription = stringResource(R.string.account),
+                modifier = Modifier.size(30.dp)
+                )
             }
             IconButton( onClick = { navController.navigate(route = "login") } ) {
-                Icon(imageVector = Icons.Filled.Lock, contentDescription = stringResource(R.string.logout))
+                Icon(imageVector = Icons.Filled.Lock,
+                    contentDescription = stringResource(R.string.logout),
+                    modifier = Modifier.size(25.dp)
+                )
             }
 
         }

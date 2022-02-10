@@ -23,6 +23,8 @@ fun Profile(
     onBackPress: () -> Unit,
     navController: NavController
 ) {
+    var username = sharedPreferences.getString("", null)
+    var password = sharedPreferences.getString(username, "")
     Surface {
         Column(
             modifier = Modifier
@@ -40,7 +42,7 @@ fun Profile(
                 }
                     Text(text = "Profile",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        fontSize = 24.sp
                     )
                 }
             }
@@ -68,13 +70,15 @@ fun Profile(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ){
-                Text(text = "Username : ",
+                Text(text = "Username",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                     )
-                    Text(text = "Username to add",
-                    fontSize = 20.sp
-                    )
+                    if (username != null) {
+                        Text(text = username,
+                            fontSize = 20.sp
+                        )
+                    }
 
                 IconButton(onClick = { navController.navigate("editprofile") }) {
                     Icon(imageVector = Icons.Default.Edit,
@@ -86,13 +90,15 @@ fun Profile(
                 Row(
                  verticalAlignment = Alignment.CenterVertically
                 ){
-                Text(text = "Password : ",
+                Text(text = "Password",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-                    Text(text = "Password to add hide",
-                        fontSize = 20.sp
-                    )
+                    if (password != null) {
+                        Text(text = password,
+                            fontSize = 20.sp
+                        )
+                    }
 
                 IconButton(onClick = { navController.navigate("editprofile") }) {
                     Icon(imageVector = Icons.Default.Edit,
@@ -104,12 +110,13 @@ fun Profile(
                 Button(
                     onClick = { navController.navigate(route ="login") },
                     modifier = Modifier
-                        .width(88.dp)
-                        .size(44.dp)
+                        .width(118.dp)
+                        .size(54.dp)
                 ) {
                     Text(text = "Log out",
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = Color.LightGray,
+                        fontSize = 22.sp
                     )
                 }
             }
