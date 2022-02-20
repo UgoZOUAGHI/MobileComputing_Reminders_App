@@ -9,10 +9,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,11 +33,25 @@ fun CategoryReminder(
     val viewState by viewModel.state.collectAsState()
 
     Column(modifier = modifier) {
-        ReminderList(
-            list = viewState.reminders,
-            viewModel = viewModel,
-            navController = navController
-        )
+
+        val seeAll = remember { mutableStateOf(false) }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Switch(
+                checked = seeAll.value,
+                onCheckedChange = { seeAll.value = it }
+            )
+            Text(
+                text = "See all",
+                modifier = Modifier
+                    .padding(start = 20.dp)
+            )
+        }
+            ReminderList(
+                list = viewState.reminders,
+                viewModel = viewModel,
+                navController = navController,
+                seeAll = seeAll.value
+            )
     }
 }
 
@@ -48,19 +60,22 @@ private fun ReminderList(
     list: List<Reminder>,
     viewModel: HomeViewModel,
     navController: NavController,
+    seeAll: Boolean
 ) {
     LazyColumn(
         contentPadding = PaddingValues(0.dp),
         verticalArrangement = Arrangement.Center
     ) {
         items(list) { item ->
-            ReminderListItem(
-                reminder = item,
-                viewModel = viewModel,
-                onClick = {},
-                modifier = Modifier.fillParentMaxWidth(),
-                navController = navController,
-            )
+        if(seeAll || item.reminder_seen.toInt() == 1){
+                ReminderListItem(
+                    reminder = item,
+                    viewModel = viewModel,
+                    onClick = {},
+                    modifier = Modifier.fillParentMaxWidth(),
+                    navController = navController,
+                )
+            }
         }
     }
 }
@@ -113,17 +128,17 @@ private fun ReminderListItem(
             fontSize = 15.sp,
             modifier = Modifier
                 .constrainAs(hour) {
-                linkTo(
-                    start = paymentCategory.end,
-                    end = iconEdit.start,
-                    startMargin = 8.dp,
-                    endMargin = 16.dp,
-                    bias = 0f
-                )
-                centerHorizontallyTo(paymentCategory)
-                absoluteLeft.linkTo(paymentCategory.absoluteRight, 1.dp)
-                bottom.linkTo(parent.bottom, 10.dp)
-            }
+                    linkTo(
+                        start = paymentCategory.end,
+                        end = iconEdit.start,
+                        startMargin = 8.dp,
+                        endMargin = 16.dp,
+                        bias = 0f
+                    )
+                    centerHorizontallyTo(paymentCategory)
+                    absoluteLeft.linkTo(paymentCategory.absoluteRight, 1.dp)
+                    bottom.linkTo(parent.bottom, 10.dp)
+                }
                 .padding(start = 8.dp)
         )
 
@@ -195,6 +210,6 @@ private fun Date.formatToString(): String {
     return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(this)
 }
 
-private fun Long.toDateString(): String {
+fun Long.toDateString(): String {
     return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(Date(this))
 }

@@ -54,7 +54,7 @@ fun Profile(
                     .padding(16.dp)
                     .fillMaxSize()
             ) {
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(50.dp))
                 Row(verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 )

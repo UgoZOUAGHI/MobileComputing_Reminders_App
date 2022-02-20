@@ -8,7 +8,7 @@ import androidx.room.*
 
 data class Reminder(
 
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val reminderId: Long = 0,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var reminderId: Long = 0,
 
     @ColumnInfo(name = "message") val message: String,
     @ColumnInfo(name = "location_x") val location_x: String,

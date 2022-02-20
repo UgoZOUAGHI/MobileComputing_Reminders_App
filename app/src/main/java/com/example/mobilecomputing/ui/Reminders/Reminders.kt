@@ -29,6 +29,9 @@ fun Reminders(
         val coroutineScope = rememberCoroutineScope()
         val message = rememberSaveable { mutableStateOf("") }
         val time = rememberSaveable{ mutableStateOf("") }
+        val seconds = rememberSaveable{ mutableStateOf("") }
+        val minutes = rememberSaveable{ mutableStateOf("") }
+        val hours = rememberSaveable{ mutableStateOf("") }
         /*val ReminderName = rememberSaveable { mutableStateOf("") }
         val ReminderDesc = rememberSaveable { mutableStateOf("") }
         val ReminderDate = rememberSaveable { mutableStateOf("") }*/
@@ -59,12 +62,14 @@ fun Reminders(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier.padding(16.dp)
             ) {
-                OutlinedTextField(
-                    value = message.value,
-                    onValueChange = { message.value = it },
-                    label = { Text(text = "Reminder name")},
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row() {
+                    OutlinedTextField(
+                        value = message.value,
+                        onValueChange = { message.value = it },
+                        label = { Text(text = "Reminder name") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
                 /*Spacer(modifier = Modifier.height(70.dp))
                 OutlinedTextField(
                     value = ReminderDesc.value,
@@ -74,31 +79,89 @@ fun Reminders(
                         .height(200.dp)
                 )
                 */
-                Spacer(modifier = Modifier.height(20.dp))
-                Row{
-                    OutlinedTextField(
-                        value = time.value,
-                        onValueChange = { time.value = it },
-                        label = { Text(text = "Reminder Time")},
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
-                        ),
+
+
+                val withNotif = remember { mutableStateOf(true)}
+
+                if(withNotif.value){
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = "Please enter the time before being notified :",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
                     )
 
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        Column(
+                            modifier = Modifier.width(110.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = hours.value,
+                                onValueChange = { hours.value = it },
+                                label = { Text(text = "Hours") },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                //modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column(
+                            modifier = Modifier.width(110.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = minutes.value,
+                                onValueChange = { minutes.value = it },
+                                label = { Text(text = "Minutes") },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                //modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column(
+                            modifier = Modifier.width(110.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = seconds.value,
+                                onValueChange = { seconds.value = it },
+                                label = { Text(text = "Seconds") },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                )
+                            )
+                        }
+                    }
                 }
                 Spacer(modifier = Modifier.height(100.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = withNotif.value,
+                        onCheckedChange = { withNotif.value = it},
+                    )
+                    Text(
+                        text = "With Notification"
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
                 Button(
                     onClick = {
                         coroutineScope.launch {
+                            if(hours.value == ""){hours.value="0"}
+                            if(minutes.value == ""){minutes.value="0"}
+                            if(seconds.value == ""){seconds.value="0"} //bc if i let them empty = app crash
                             viewModel.saveReminder(
                                 com.example.mobilecomputing.Data.Entity.Reminder(
                                     message = message.value,
                                     location_x = "",
                                     location_y = "",
-                                    reminder_time = time.value,
+                                    reminder_time = (((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toString(),
                                     creation_time = Date().time,
                                     creator_id = 0,
-                                    reminder_seen = 0
+                                    reminder_seen = 0,
                                 )
                             )
                         }

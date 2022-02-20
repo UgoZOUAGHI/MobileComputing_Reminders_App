@@ -2,7 +2,6 @@ package com.example.mobilecomputing.ui.Reminders
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -13,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,7 +29,9 @@ fun EditReminder(
 ) {
     val viewModel: EditReminderViewModel = viewModel(
         key = "reminder_id_$reminderId",
-        factory = viewModelProviderFactoryOf { EditReminderViewModel(reminderId) }
+        factory = viewModelProviderFactoryOf {
+            EditReminderViewModel(reminderId)
+        }
     )
     val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -39,14 +39,6 @@ fun EditReminder(
     val appMessage = viewState.reminder?.message ?: ""
     val message = rememberSaveable { mutableStateOf("") }
     message.value = appMessage
-
-    val appLocationX = viewState.reminder?.location_x ?: ""
-    val locationX = rememberSaveable { mutableStateOf("") }
-    locationX.value = appLocationX
-
-    val appLocationY = viewState.reminder?.location_y ?: ""
-    val locationY = rememberSaveable { mutableStateOf("") }
-    locationY.value = appLocationY
 
     val appReminderTime = viewState.reminder?.reminder_time ?: ""
     val reminderTime = rememberSaveable { mutableStateOf("") }
@@ -81,11 +73,24 @@ fun EditReminder(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxSize()
-        ) {
+        ){
+            Spacer(modifier = Modifier.height(50.dp))
+            OutlinedTextField(
+                value = message.value,
+                onValueChange = { message.value = it },
+                label = { Text(text = "Message")},
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            OutlinedTextField(
+                value = reminderTime.value,
+                onValueChange = { reminderTime.value = it },
+                label = { Text(text = "Reminder Time")},
+                modifier = Modifier.fillMaxWidth()
+            )
 
 
             Spacer(modifier = Modifier.height(100.dp))
@@ -100,7 +105,7 @@ fun EditReminder(
                             location_x = "",
                             location_y = "",
                             creator_id = 0,
-                            reminder_seen = 0,
+                            reminder_seen = viewState.reminder?.reminder_seen ?: 0,
                         )
                     )
                         Toast.makeText(context, "Reminder Modified !", Toast.LENGTH_SHORT).show()
@@ -109,6 +114,7 @@ fun EditReminder(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .size(52.dp)
             ) {
                 Text(text = "Save modifications",
                     fontWeight = FontWeight.Bold,

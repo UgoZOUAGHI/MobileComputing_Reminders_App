@@ -25,4 +25,7 @@ abstract class ReminderDao{
     @Query("DELETE FROM reminders WHERE id = :reminderId")
     abstract suspend fun deleteById(reminderId: Long)
 
+    @Query("UPDATE reminders SET reminder_seen=1 WHERE id = :reminderId")
+    abstract suspend fun updateSeen(reminderId: Long)
+
 }
