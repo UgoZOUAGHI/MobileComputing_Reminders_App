@@ -2,6 +2,7 @@ package com.example.mobilecomputing.ui.Reminders
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -11,7 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,6 +46,19 @@ fun EditReminder(
     val appReminderTime = viewState.reminder?.reminder_time ?: ""
     val reminderTime = rememberSaveable { mutableStateOf("") }
     reminderTime.value = appReminderTime
+
+    val appReminderHour = viewState.reminder?.reminder_hour ?: ""
+    val reminderHour = rememberSaveable { mutableStateOf("") }
+    reminderHour.value = appReminderHour
+
+    val appReminderSeen = viewState.reminder?.reminder_seen ?: ""
+    val reminderSeen = rememberSaveable { mutableStateOf("") }
+    reminderSeen.value = appReminderSeen.toString()
+
+    val seconds = rememberSaveable{ mutableStateOf("") }
+    val minutes = rememberSaveable{ mutableStateOf("") }
+    val hours = rememberSaveable { mutableStateOf("") }
+
 
     Surface(
 
@@ -84,28 +100,82 @@ fun EditReminder(
                 label = { Text(text = "Message")},
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                value = reminderTime.value,
-                onValueChange = { reminderTime.value = it },
-                label = { Text(text = "Reminder Time")},
+            Spacer(modifier = Modifier.height(30.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "The actual Timer : " + reminderHour.value,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+            Row(
                 modifier = Modifier.fillMaxWidth()
-            )
+            ){
+                Column(
+                    modifier = Modifier.width(110.dp)
+                ) {
+                    OutlinedTextField(
+                        value = hours.value,
+                        onValueChange = { hours.value = it },
+                        label = { Text(text = "Hours") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        //modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(
+                    modifier = Modifier.width(110.dp)
+                ) {
+                    OutlinedTextField(
+                        value = minutes.value,
+                        onValueChange = { minutes.value = it },
+                        label = { Text(text = "Minutes") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        //modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(
+                    modifier = Modifier.width(110.dp)
+                ) {
+                    OutlinedTextField(
+                        value = seconds.value,
+                        onValueChange = { seconds.value = it },
+                        label = { Text(text = "Seconds") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        )
+                    )
+                }
+            }
 
 
             Spacer(modifier = Modifier.height(100.dp))
             Button(
                 onClick = {
-                    coroutineScope.launch { viewModel.saveReminder(
+                    coroutineScope.launch {
+                        if(hours.value == ""){hours.value="0"}
+                        if(minutes.value == ""){minutes.value="0"}
+                        if(seconds.value == ""){seconds.value="0"}
+                        viewModel.saveReminder(
                         Reminder(
                             reminderId = reminderId,
                             message = message.value,
-                            reminder_time = reminderTime.value,
+                            reminder_time = (((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toString(),
                             creation_time = Date().time,
                             location_x = "",
                             location_y = "",
                             creator_id = 0,
-                            reminder_seen = viewState.reminder?.reminder_seen ?: 0,
+                            reminder_seen = if(reminderSeen.value.toInt() == 1 || (((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toString() != "0"){
+                                0
+                            }else{
+                                1
+                                 },
+                            reminder_hour = hours.value + "h" + minutes.value + "m" + seconds.value + "s"
                         )
                     )
                         Toast.makeText(context, "Reminder Modified !", Toast.LENGTH_SHORT).show()

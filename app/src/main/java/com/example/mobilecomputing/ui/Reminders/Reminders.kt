@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mobilecomputing.Data.Entity.Reminder
 import java.util.*
 
 @Composable
@@ -150,18 +151,23 @@ fun Reminders(
                 Button(
                     onClick = {
                         coroutineScope.launch {
-                            if(hours.value == ""){hours.value="0"}
-                            if(minutes.value == ""){minutes.value="0"}
-                            if(seconds.value == ""){seconds.value="0"} //bc if i let them empty = app crash
+                            if(hours.value == "" || !withNotif.value){hours.value="0"}
+                            if(minutes.value == "" || !withNotif.value){minutes.value="0"}
+                            if(seconds.value == "" || !withNotif.value){seconds.value="0"} //bc if i let them empty = app crash
                             viewModel.saveReminder(
-                                com.example.mobilecomputing.Data.Entity.Reminder(
+                                Reminder(
                                     message = message.value,
                                     location_x = "",
                                     location_y = "",
                                     reminder_time = (((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toString(),
                                     creation_time = Date().time,
                                     creator_id = 0,
-                                    reminder_seen = 0,
+                                    reminder_seen = if((((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toInt() == 0){
+                                        1
+                                    }else{
+                                        0
+                                    },
+                                    reminder_hour = hours.value + "h" + minutes.value + "m" + seconds.value + "s",
                                 )
                             )
                         }

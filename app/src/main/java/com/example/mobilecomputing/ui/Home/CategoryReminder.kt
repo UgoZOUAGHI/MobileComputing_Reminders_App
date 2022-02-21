@@ -38,12 +38,13 @@ fun CategoryReminder(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Switch(
                 checked = seeAll.value,
+                modifier = Modifier.padding(top = 2.dp, start = 10.dp),
                 onCheckedChange = { seeAll.value = it }
             )
             Text(
                 text = "See all",
-                modifier = Modifier
-                    .padding(start = 20.dp)
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
             )
         }
             ReminderList(
@@ -120,27 +121,51 @@ private fun ReminderListItem(
             }
         )
 
-        Text(
-            text = reminder.reminder_time,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.caption,
-            fontSize = 15.sp,
-            modifier = Modifier
-                .constrainAs(hour) {
-                    linkTo(
-                        start = paymentCategory.end,
-                        end = iconEdit.start,
-                        startMargin = 8.dp,
-                        endMargin = 16.dp,
-                        bias = 0f
-                    )
-                    centerHorizontallyTo(paymentCategory)
-                    absoluteLeft.linkTo(paymentCategory.absoluteRight, 1.dp)
-                    bottom.linkTo(parent.bottom, 10.dp)
-                }
-                .padding(start = 8.dp)
-        )
+        if(reminder.reminder_time.toInt() != 0){
+            Text(
+                text = reminder.reminder_hour,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.caption,
+                fontSize = 15.sp,
+                modifier = Modifier
+                    .constrainAs(hour) {
+                        linkTo(
+                            start = paymentCategory.end,
+                            end = iconEdit.start,
+                            startMargin = 8.dp,
+                            endMargin = 16.dp,
+                            bias = 0f
+                        )
+                        centerHorizontallyTo(paymentCategory)
+                        absoluteLeft.linkTo(paymentCategory.absoluteRight, 1.dp)
+                        bottom.linkTo(parent.bottom, 10.dp)
+                    }
+                    .padding(start = 8.dp)
+            )
+        }else{
+            Text(
+                text = "Without Notification",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.caption,
+                fontSize = 15.sp,
+                modifier = Modifier
+                    .constrainAs(hour) {
+                        linkTo(
+                            start = paymentCategory.end,
+                            end = iconEdit.start,
+                            startMargin = 8.dp,
+                            endMargin = 16.dp,
+                            bias = 0f
+                        )
+                        centerHorizontallyTo(paymentCategory)
+                        absoluteLeft.linkTo(paymentCategory.absoluteRight, 1.dp)
+                        bottom.linkTo(parent.bottom, 10.dp)
+                    }
+                    .padding(start = 8.dp)
+            )
+        }
 
         Text(
             text = reminder.creation_time.toDateString(),

@@ -120,6 +120,8 @@ private fun reminderNotification(reminder: Reminder) {
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
 
+    if(reminder.reminder_time.toInt() != 0){
+
     val notificationWorker = OneTimeWorkRequestBuilder<NotificationWorker>()
         .setInitialDelay(reminder.reminder_time.toLong(), TimeUnit.SECONDS)
         .setConstraints(constraints)
@@ -139,6 +141,7 @@ private fun reminderNotification(reminder: Reminder) {
                 }
             }
         }
+    }
 }
 
 private fun createSuccessReminderNotification(reminder: Reminder) {

@@ -16,6 +16,8 @@ data class Reminder(
     @ColumnInfo(name = "reminder_time") val reminder_time: String,
     @ColumnInfo(name = "creation_time") val creation_time: Long,
     @ColumnInfo(name = "creator_id") val creator_id: Long,
-    @ColumnInfo(name = "reminder_seen") val reminder_seen: Long
+    @ColumnInfo(name = "reminder_seen") val reminder_seen: Long,
+    @ColumnInfo(name = "reminder_hour") val reminder_hour: String
+
 )
 
