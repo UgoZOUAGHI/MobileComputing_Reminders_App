@@ -109,9 +109,6 @@ fun Profile(
                 Spacer(modifier = Modifier.height(250.dp))
                 Button(
                     onClick = { navController.navigate(route ="login") },
-                    modifier = Modifier
-                        .width(118.dp)
-                        .size(54.dp)
                 ) {
                     Text(text = "Log out",
                         fontWeight = FontWeight.Bold,

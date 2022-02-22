@@ -55,6 +55,10 @@ fun EditReminder(
     val reminderSeen = rememberSaveable { mutableStateOf("") }
     reminderSeen.value = appReminderSeen.toString()
 
+    val appReminderVibration = viewState.reminder?.reminder_vibration ?: ""
+    val reminderVibration = rememberSaveable { mutableStateOf("") }
+    reminderVibration.value = appReminderVibration.toString()
+
     val seconds = rememberSaveable{ mutableStateOf("") }
     val minutes = rememberSaveable{ mutableStateOf("") }
     val hours = rememberSaveable { mutableStateOf("") }
@@ -152,6 +156,15 @@ fun EditReminder(
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(30.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = reminderVibration.value.toBoolean(),
+                    onCheckedChange = { reminderVibration.value = it.toString() },
+                )
+                Text(
+                    text = "With Vibration"
+                )
+            }
 
 
             Spacer(modifier = Modifier.height(100.dp))
@@ -175,7 +188,8 @@ fun EditReminder(
                             }else{
                                 1
                                  },
-                            reminder_hour = hours.value + "h" + minutes.value + "m" + seconds.value + "s"
+                            reminder_hour = hours.value + "h" + minutes.value + "m" + seconds.value + "s",
+                            reminder_vibration = reminderVibration.value.toBoolean()
                         )
                     )
                         Toast.makeText(context, "Reminder Modified !", Toast.LENGTH_SHORT).show()

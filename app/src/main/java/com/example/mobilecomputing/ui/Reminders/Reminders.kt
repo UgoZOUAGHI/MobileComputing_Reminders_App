@@ -83,6 +83,7 @@ fun Reminders(
 
 
                 val withNotif = remember { mutableStateOf(true)}
+                val withVibration = remember { mutableStateOf(true)}
 
                 if(withNotif.value){
                     Spacer(modifier = Modifier.height(20.dp))
@@ -147,7 +148,15 @@ fun Reminders(
                         text = "With Notification"
                     )
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = withVibration.value,
+                        onCheckedChange = { withVibration.value = it},
+                    )
+                    Text(
+                        text = "With Vibration"
+                    )
+                }
+                Spacer(modifier = Modifier.height(50.dp))
                 Button(
                     onClick = {
                         coroutineScope.launch {
@@ -168,18 +177,16 @@ fun Reminders(
                                         0
                                     },
                                     reminder_hour = hours.value + "h" + minutes.value + "m" + seconds.value + "s",
+                                    reminder_vibration = true
                                 )
                             )
                         }
                         onBackPress() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(50.dp)
-                ) {
+                    ) {
                     Text(text = "Set reminder",
                         fontWeight = FontWeight.Bold,
                         color = Color.LightGray,
-                        fontSize = 20.sp
+                        fontSize = 22.sp
                     )
                 }
             }

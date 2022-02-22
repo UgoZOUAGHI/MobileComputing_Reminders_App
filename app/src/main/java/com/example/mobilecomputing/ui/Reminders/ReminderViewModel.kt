@@ -1,9 +1,6 @@
 package com.example.mobilecomputing.ui.Reminders
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
+import android.app.*
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -25,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 import android.content.Intent
+import android.graphics.Color
 import androidx.compose.material.icons.filled.Info
 import com.example.mobilecomputing.Graph.reminderRepository
 
@@ -152,6 +150,11 @@ private fun createSuccessReminderNotification(reminder: Reminder) {
         getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
+    var vibrationPattern = longArrayOf(0)
+    if(reminder.reminder_vibration) {
+        vibrationPattern = longArrayOf(500)
+    }
+
     val builder = NotificationCompat.Builder(Graph.appContext, "CHANNEL_ID")
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle("Reminder Notification !")
@@ -159,6 +162,9 @@ private fun createSuccessReminderNotification(reminder: Reminder) {
         .setContentText("    Don't miss to : "+reminder.message)
         .addAction(R.drawable.ic_launcher_background, "Go to",
             resultPendingIntent)
+        .setVibrate(vibrationPattern)
+        .setDefaults(Notification.DEFAULT_VIBRATE)
+        .setLights(Color.RED, 3000, 3000)
 
     with(NotificationManagerCompat.from(Graph.appContext)) {
         //notificationId is unique for each notification that you define

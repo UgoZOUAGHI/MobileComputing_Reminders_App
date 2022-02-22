@@ -132,9 +132,7 @@ fun EditProfile(
                         Toast.makeText(context, "Changes Done !", Toast.LENGTH_SHORT).show()
                     } else
                         Toast.makeText(context, "Try again...", Toast.LENGTH_SHORT).show()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
+                }
             ) {
                 Text(text = "Save changes",
                     fontWeight = FontWeight.Bold,
