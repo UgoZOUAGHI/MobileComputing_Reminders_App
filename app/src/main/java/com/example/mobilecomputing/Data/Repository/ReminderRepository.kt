@@ -13,4 +13,5 @@ class ReminderRepository (
     suspend fun updateReminder(reminder: Reminder) = reminderDao.update(reminder)
     suspend fun getReminder(id: Long) = reminderDao.reminder(id)
     suspend fun updateSeen(id: Long) = reminderDao.updateSeen(id)
+    suspend fun updateSeenBack(id: Long) = reminderDao.updateSeenBack(id)
 }

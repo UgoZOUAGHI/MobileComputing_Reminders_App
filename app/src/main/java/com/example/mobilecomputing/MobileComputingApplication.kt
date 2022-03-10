@@ -1,4 +1,4 @@
-package com.example.mobilecomputing.ui
+package com.example.mobilecomputing
 
 import android.app.Application
 import com.example.mobilecomputing.Graph

@@ -1,5 +1,6 @@
 package com.example.mobilecomputing.ui.Home
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.R
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -20,15 +22,24 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.example.mobilecomputing.Data.Entity.Reminder
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.ui.graphics.Color.Companion.LightGray
+import com.example.mobilecomputing.Graph
+import com.example.mobilecomputing.Graph.reminderRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlin.math.pow
 
 @Composable
 fun CategoryReminder(
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier,
     navController: NavController,
+    latlng: LatLng?
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -46,12 +57,40 @@ fun CategoryReminder(
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )
+            if (latlng == null) {
+                Button(
+                    onClick = { navController.navigate("map") },
+                    modifier = Modifier.padding(top = 2.dp, start = 90.dp),
+                ) {
+                    Text(text = "Virtual Location",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = LightGray
+                    )
+                }
+            }
+            else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Button(
+                        onClick = { navController.navigate("map") },
+                        modifier = Modifier.padding(top = 2.dp, start = 110.dp),
+                    ) {
+                        Text(text = "Change V-Loc",
+                            fontSize = 18.sp,
+                            color = LightGray
+                        )
+                    }
+                }
+            }
         }
             ReminderList(
                 list = viewState.reminders,
                 viewModel = viewModel,
                 navController = navController,
-                seeAll = seeAll.value
+                seeAll = seeAll.value,
+                latlng = latlng
             )
     }
 }
@@ -61,20 +100,23 @@ private fun ReminderList(
     list: List<Reminder>,
     viewModel: HomeViewModel,
     navController: NavController,
-    seeAll: Boolean
+    seeAll: Boolean,
+    latlng: LatLng?
 ) {
     LazyColumn(
         contentPadding = PaddingValues(0.dp),
         verticalArrangement = Arrangement.Center
     ) {
         items(list) { item ->
-        if(seeAll || item.reminder_seen.toInt() == 1){
+        if(seeAll || item.reminder_seen.toInt() == 1 && closeLocation(item, latlng)){
+            val closeLoc = closeLocation(item, latlng)
                 ReminderListItem(
                     reminder = item,
                     viewModel = viewModel,
                     onClick = {},
                     modifier = Modifier.fillParentMaxWidth(),
                     navController = navController,
+                    closeLoc = closeLoc
                 )
             }
         }
@@ -89,6 +131,7 @@ private fun ReminderListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavController,
+    closeLoc: Boolean
 ) {
     ConstraintLayout(modifier = modifier.clickable { onClick() }) {
         val (divider, remainderMessage, paymentCategory, iconEdit, iconDelete, date, hour) = createRefs()
@@ -120,53 +163,49 @@ private fun ReminderListItem(
                 width = Dimension.preferredWrapContent
             }
         )
-
-        if(reminder.reminder_time.toInt() != 0){
-            Text(
-                text = reminder.reminder_hour,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.caption,
-                fontSize = 15.sp,
-                modifier = Modifier
-                    .constrainAs(hour) {
-                        linkTo(
-                            start = paymentCategory.end,
-                            end = iconEdit.start,
-                            startMargin = 8.dp,
-                            endMargin = 16.dp,
-                            bias = 0f
-                        )
-                        centerHorizontallyTo(paymentCategory)
-                        absoluteLeft.linkTo(paymentCategory.absoluteRight, 1.dp)
-                        bottom.linkTo(parent.bottom, 10.dp)
-                    }
-                    .padding(start = 8.dp)
-            )
+        var message = ""
+        message += if(reminder.reminder_time.toInt() == 0){
+            "X Notification"
         }else{
-            Text(
-                text = "Without Notification",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.caption,
-                fontSize = 15.sp,
-                modifier = Modifier
-                    .constrainAs(hour) {
-                        linkTo(
-                            start = paymentCategory.end,
-                            end = iconEdit.start,
-                            startMargin = 8.dp,
-                            endMargin = 16.dp,
-                            bias = 0f
-                        )
-                        centerHorizontallyTo(paymentCategory)
-                        absoluteLeft.linkTo(paymentCategory.absoluteRight, 1.dp)
-                        bottom.linkTo(parent.bottom, 10.dp)
-                    }
-                    .padding(start = 8.dp)
-            )
+            reminder.reminder_hour
+        }
+        message += if(closeLoc){
+            if(reminder.location_x != 0.0 && reminder.location_y != 0.0) {
+                " / V Location"
+            }else{
+                updateSeen(reminder)
+                " / X Location"
+            }
+        }else{
+            if(reminder.location_x != 0.0 && reminder.location_y != 0.0) {
+                " / X Location"
+            }else{
+                updateSeen(reminder)
+                " / X Location"
+            }
         }
 
+        Text(
+            text = message,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.caption,
+            fontSize = 12.sp,
+            modifier = Modifier
+                .constrainAs(hour) {
+                    linkTo(
+                        start = paymentCategory.end,
+                        end = iconEdit.start,
+                        startMargin = 8.dp,
+                        endMargin = 16.dp,
+                        bias = 0f
+                    )
+                    centerHorizontallyTo(paymentCategory)
+                    absoluteLeft.linkTo(paymentCategory.absoluteRight, 1.dp)
+                    bottom.linkTo(parent.bottom, 10.dp)
+                }
+                .padding(start = 8.dp)
+        )
         Text(
             text = reminder.creation_time.toDateString(),
             maxLines = 1,
@@ -231,10 +270,31 @@ private fun ReminderListItem(
     }
 }
 
+fun updateSeen(reminder: Reminder) {
+    if(reminder.location_x == 0.0 && reminder.location_y == 0.0){
+        val scope = CoroutineScope(Dispatchers.Default)
+        scope.launch {
+            reminderRepository.updateSeenBack(reminder.reminderId)
+        }
+    }else{}
+}
+
 private fun Date.formatToString(): String {
     return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(this)
 }
 
 fun Long.toDateString(): String {
     return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(Date(this))
+}
+
+private fun closeLocation(reminder: Reminder, latlng: LatLng?): Boolean {
+    val x = ((latlng?.latitude ?: reminder.location_x) - reminder.location_x).pow(2)
+    val y = ((latlng?.longitude ?: reminder.location_y) - reminder.location_y).pow(2)
+    val distance = kotlin.math.sqrt(x + y)
+
+    if(reminder.location_x == 0.0 && reminder.location_y == 0.0){
+        return true
+    }
+
+    return distance < 0.05
 }

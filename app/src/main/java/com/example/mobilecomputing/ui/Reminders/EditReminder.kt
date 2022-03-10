@@ -18,17 +18,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.mobilecomputing.Data.Entity.Reminder
 import com.example.mobilecomputing.ui.Profile.savechanges
 import com.example.mobilecomputing.util.viewModelProviderFactoryOf
 import com.google.accompanist.insets.systemBarsPadding
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
 fun EditReminder(
     onBackPress: () -> Unit,
-    reminderId: Long
+    reminderId: Long,
+    navController: NavController
 ) {
     val viewModel: EditReminderViewModel = viewModel(
         key = "reminder_id_$reminderId",
@@ -63,6 +66,23 @@ fun EditReminder(
     val minutes = rememberSaveable{ mutableStateOf("") }
     val hours = rememberSaveable { mutableStateOf("") }
 
+    val latlng = navController
+        .currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<LatLng>("location_data")
+        ?.value
+
+    val appReminderLocationX = viewState.reminder?.location_x ?: 0.0
+    val appReminderLocationY = viewState.reminder?.location_y ?: 0.0
+    val reminderLocationX = rememberSaveable { mutableStateOf(0.0) }
+    val reminderLocationY = rememberSaveable { mutableStateOf(0.0) }
+    reminderLocationX.value = appReminderLocationX
+    reminderLocationY.value = appReminderLocationY
+
+    if(latlng != null){
+        reminderLocationX.value = latlng.latitude
+        reminderLocationY.value = latlng.longitude
+    }
 
     Surface(
 
@@ -157,6 +177,32 @@ fun EditReminder(
                 }
             }
             Spacer(modifier = Modifier.height(30.dp))
+            if (reminderLocationX.value == 0.0 && reminderLocationY.value == 0.0) {
+                Button(
+                    onClick = { navController.navigate("map") },
+                ) {
+                    Text(text = "Edit Location",
+                        color = Color.LightGray,
+                        fontSize = 20.sp
+                    )
+                }
+            }
+            else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Button(
+                        onClick = { navController.navigate("map") },
+                    ) {
+                        Text(text = "Change Location",
+                            color = Color.LightGray,
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+
+            }
+            Spacer(modifier = Modifier.height(30.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(checked = reminderVibration.value.toBoolean(),
                     onCheckedChange = { reminderVibration.value = it.toString() },
@@ -180,8 +226,8 @@ fun EditReminder(
                             message = message.value,
                             reminder_time = (((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toString(),
                             creation_time = Date().time,
-                            location_x = "",
-                            location_y = "",
+                            location_x = 0.0,
+                            location_y = 0.0,
                             creator_id = 0,
                             reminder_seen = if(reminderSeen.value.toInt() == 1 || (((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toString() != "0"){
                                 0

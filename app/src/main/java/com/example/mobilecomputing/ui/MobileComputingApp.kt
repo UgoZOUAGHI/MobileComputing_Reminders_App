@@ -8,9 +8,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.mobilecomputing.Data.Entity.Reminder
 import com.example.mobilecomputing.ui.Home.Home
 import com.example.mobilecomputing.ui.Login.Login
 import com.example.mobilecomputing.ui.Login.Register
+import com.example.mobilecomputing.ui.Map.ReminderLocationMap
 import com.example.mobilecomputing.ui.MobileComputingAppState
 import com.example.mobilecomputing.ui.Reminders.Reminders
 import com.example.mobilecomputing.ui.Reminders.ReminderViewModel
@@ -48,8 +50,8 @@ fun MobileComputingApp(
         }
         composable(route = "reminders") {
             Reminders(onBackPress = appState::navigateBack,
-                
-                )
+                navController = appState.navController
+            )
         }
         composable(route ="profile"){
             Profile(
@@ -82,12 +84,19 @@ fun MobileComputingApp(
                     type = NavType.LongType
                 }
             )
-        ) { backStackEntry ->
+        ) {
+                backStackEntry ->
             val id = backStackEntry.arguments?.getLong("id")
             EditReminder(
+                navController = appState.navController,
                 onBackPress = appState::navigateBack,
                 reminderId = id ?: 0
             )
+        }
+        composable(route = "map")
+        {
+            ReminderLocationMap(
+                navController = appState.navController)
         }
     }
 }

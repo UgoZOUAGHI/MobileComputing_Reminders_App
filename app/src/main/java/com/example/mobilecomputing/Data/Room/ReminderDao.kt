@@ -28,4 +28,6 @@ abstract class ReminderDao{
     @Query("UPDATE reminders SET reminder_seen=1 WHERE id = :reminderId")
     abstract suspend fun updateSeen(reminderId: Long)
 
+    @Query("UPDATE reminders SET reminder_seen=0 WHERE id = :reminderId")
+    abstract suspend fun updateSeenBack(reminderId: Long)
 }

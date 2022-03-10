@@ -17,25 +17,35 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.mobilecomputing.Data.Entity.Reminder
+import com.google.android.gms.maps.model.LatLng
 import java.util.*
+import androidx.compose.ui.graphics.Color.Companion.LightGray
 
 @Composable
 fun Reminders(
     onBackPress: () -> Unit,
-    viewModel: ReminderViewModel = viewModel()
+    viewModel: ReminderViewModel = viewModel(),
+    navController: NavController
 ) {
     Surface {
-        val viewState by viewModel.state.collectAsState()
+        //val viewState by viewModel.state.collectAsState()
         val coroutineScope = rememberCoroutineScope()
         val message = rememberSaveable { mutableStateOf("") }
-        val time = rememberSaveable{ mutableStateOf("") }
+        //val time = rememberSaveable{ mutableStateOf("") }
         val seconds = rememberSaveable{ mutableStateOf("") }
         val minutes = rememberSaveable{ mutableStateOf("") }
         val hours = rememberSaveable{ mutableStateOf("") }
         /*val ReminderName = rememberSaveable { mutableStateOf("") }
         val ReminderDesc = rememberSaveable { mutableStateOf("") }
         val ReminderDate = rememberSaveable { mutableStateOf("") }*/
+        val latlng = navController
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<LatLng>("location_data")
+            ?.value
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -54,7 +64,7 @@ fun Reminders(
                 Text(text = "New Reminder",
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
-                    color = Color.LightGray,
+                    color = LightGray,
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -84,6 +94,7 @@ fun Reminders(
 
                 val withNotif = remember { mutableStateOf(true)}
                 val withVibration = remember { mutableStateOf(true)}
+                val withLocation = remember { mutableStateOf(true)}
 
                 if(withNotif.value){
                     Spacer(modifier = Modifier.height(20.dp))
@@ -138,6 +149,33 @@ fun Reminders(
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(10.dp))
+                if(withLocation.value) {
+                    if (latlng == null) {
+                        Button(
+                            onClick = { navController.navigate("map") },
+                        ) {
+                            Text(text = "Set Location",
+                                fontSize = 18.sp,
+                                color = LightGray
+                            )
+                        }
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Button(
+                                onClick = { navController.navigate("map") },
+                            ) {
+                                Text(text = "Change Location",
+                                    fontSize = 18.sp,
+                                    color = LightGray
+                                )
+                            }
+                        }
+                    }
+                }
                 Spacer(modifier = Modifier.height(100.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -156,6 +194,14 @@ fun Reminders(
                         text = "With Vibration"
                     )
                 }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = withLocation.value,
+                        onCheckedChange = { withLocation.value = it},
+                    )
+                    Text(
+                        text = "With Location"
+                    )
+                }
                 Spacer(modifier = Modifier.height(50.dp))
                 Button(
                     onClick = {
@@ -163,21 +209,27 @@ fun Reminders(
                             if(hours.value == "" || !withNotif.value){hours.value="0"}
                             if(minutes.value == "" || !withNotif.value){minutes.value="0"}
                             if(seconds.value == "" || !withNotif.value){seconds.value="0"} //bc if i let them empty = app crash
+                            var locx = (latlng?.latitude ?: 0.0)
+                            var locy = (latlng?.longitude ?: 0.0)
+                            if(!withLocation.value){
+                                locx = 0.0
+                                locy = 0.0
+                            }
                             viewModel.saveReminder(
                                 Reminder(
                                     message = message.value,
-                                    location_x = "",
-                                    location_y = "",
+                                    location_x = locx,
+                                    location_y = locy,
                                     reminder_time = (((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toString(),
                                     creation_time = Date().time,
                                     creator_id = 0,
-                                    reminder_seen = if((((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toInt() == 0){
+                                    reminder_seen = if((((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toInt() == 0 || !withLocation.value ){
                                         1
                                     }else{
                                         0
                                     },
                                     reminder_hour = hours.value + "h" + minutes.value + "m" + seconds.value + "s",
-                                    reminder_vibration = true
+                                    reminder_vibration = withVibration.value
                                 )
                             )
                         }
@@ -185,7 +237,7 @@ fun Reminders(
                     ) {
                     Text(text = "Set reminder",
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray,
+                        color = LightGray,
                         fontSize = 22.sp
                     )
                 }

@@ -16,6 +16,7 @@ import com.google.accompanist.insets.systemBarsPadding
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun Home(
@@ -37,7 +38,7 @@ fun HomeContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(route = "reminders") },
-                contentColor = Color.LightGray,
+                contentColor = LightGray,
                 modifier = Modifier.padding(all = 20.dp),
                 backgroundColor = MaterialTheme.colors.primary
             ) {
@@ -55,6 +56,12 @@ fun HomeContent(
         ) {
             val appBarColor = MaterialTheme.colors.primary
 
+            val latlng = navController
+                .currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<LatLng>("location_data")
+                ?.value
+
             HomeAppBar(
                 backgroundColor = appBarColor,
                 navController = navController
@@ -62,7 +69,8 @@ fun HomeContent(
             CategoryReminder(
                 viewModel(),
                 modifier = Modifier.fillMaxSize(),
-                navController = navController
+                navController = navController,
+                latlng = latlng
             )
         }
     }
