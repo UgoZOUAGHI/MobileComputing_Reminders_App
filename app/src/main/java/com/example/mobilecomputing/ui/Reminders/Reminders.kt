@@ -229,7 +229,8 @@ fun Reminders(
                                         0
                                     },
                                     reminder_hour = hours.value + "h" + minutes.value + "m" + seconds.value + "s",
-                                    reminder_vibration = withVibration.value
+                                    reminder_vibration = withVibration.value,
+                                    reminder_location = withLocation.value
                                 )
                             )
                         }

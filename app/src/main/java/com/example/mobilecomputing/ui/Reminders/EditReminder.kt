@@ -79,6 +79,10 @@ fun EditReminder(
     reminderLocationX.value = appReminderLocationX
     reminderLocationY.value = appReminderLocationY
 
+    val appReminderLocation = viewState.reminder?.reminder_location ?: ""
+    val reminderLocation = rememberSaveable { mutableStateOf("") }
+    reminderLocation.value = appReminderLocation.toString()
+
     if(latlng != null){
         reminderLocationX.value = latlng.latitude
         reminderLocationY.value = latlng.longitude
@@ -211,8 +215,6 @@ fun EditReminder(
                     text = "With Vibration"
                 )
             }
-
-
             Spacer(modifier = Modifier.height(100.dp))
             Button(
                 onClick = {
@@ -220,14 +222,20 @@ fun EditReminder(
                         if(hours.value == ""){hours.value="0"}
                         if(minutes.value == ""){minutes.value="0"}
                         if(seconds.value == ""){seconds.value="0"}
+                        var locx = (latlng?.latitude ?: 0.0)
+                        var locy = (latlng?.longitude ?: 0.0)
+                        if(reminderLocation.value.toBoolean()){
+                            locx = 0.0
+                            locy = 0.0
+                        }
                         viewModel.saveReminder(
                         Reminder(
                             reminderId = reminderId,
                             message = message.value,
                             reminder_time = (((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toString(),
                             creation_time = Date().time,
-                            location_x = 0.0,
-                            location_y = 0.0,
+                            location_x = locx,
+                            location_y = locy,
                             creator_id = 0,
                             reminder_seen = if(reminderSeen.value.toInt() == 1 || (((hours.value.toLong()*60*60)+minutes.value.toLong())*60+seconds.value.toLong()).toString() != "0"){
                                 0
@@ -235,7 +243,8 @@ fun EditReminder(
                                 1
                                  },
                             reminder_hour = hours.value + "h" + minutes.value + "m" + seconds.value + "s",
-                            reminder_vibration = reminderVibration.value.toBoolean()
+                            reminder_vibration = reminderVibration.value.toBoolean(),
+                            reminder_location = reminderLocation.value.toBoolean()
                         )
                     )
                         Toast.makeText(context, "Reminder Modified !", Toast.LENGTH_SHORT).show()

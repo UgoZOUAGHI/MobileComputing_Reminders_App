@@ -7,7 +7,7 @@ import com.example.mobilecomputing.Data.Entity.Reminder
 
 @Database(
     entities = [Reminder::class],
-    version = 8,
+    version = 10,
     exportSchema = false
 )
 

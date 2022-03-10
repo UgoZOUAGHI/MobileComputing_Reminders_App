@@ -108,7 +108,7 @@ private fun ReminderList(
         verticalArrangement = Arrangement.Center
     ) {
         items(list) { item ->
-        if(seeAll || item.reminder_seen.toInt() == 1 && closeLocation(item, latlng)){
+        if(seeAll || item.reminder_seen.toInt() == 1 && !item.reminder_location || closeLocation(item, latlng)){
             val closeLoc = closeLocation(item, latlng)
                 ReminderListItem(
                     reminder = item,
@@ -169,20 +169,10 @@ private fun ReminderListItem(
         }else{
             reminder.reminder_hour
         }
-        message += if(closeLoc){
-            if(reminder.location_x != 0.0 && reminder.location_y != 0.0) {
-                " / V Location"
-            }else{
-                updateSeen(reminder)
-                " / X Location"
-            }
+        message += if(closeLoc && reminder.reminder_location){
+            " / V Location"
         }else{
-            if(reminder.location_x != 0.0 && reminder.location_y != 0.0) {
-                " / X Location"
-            }else{
-                updateSeen(reminder)
-                " / X Location"
-            }
+            " / X Location"
         }
 
         Text(
